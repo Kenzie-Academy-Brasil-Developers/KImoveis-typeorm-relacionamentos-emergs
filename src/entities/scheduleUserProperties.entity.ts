@@ -7,15 +7,15 @@ export class Schedule{
   @PrimaryGeneratedColumn('uuid')
   id:string
 
-  @Column()
-  date: string
+  @Column({type:"date"})
+  date: Date
 
-  @Column()
-  hour: string
+  @Column({type:"time"})
+  hour: Date
 
-  @ManyToOne(()=> Properties)
-  property: string
+  @ManyToOne(()=> Properties, (property)=>property.schedules)
+  properties: Properties
 
-  @ManyToOne(()=> User)
-  user: string
+  @ManyToOne(()=> User, {eager:true})
+  user: User
 }

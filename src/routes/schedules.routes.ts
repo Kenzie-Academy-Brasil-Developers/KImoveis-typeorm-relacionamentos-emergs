@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { listSchedulesPropertiesController, scheduleVisitController } from '../controllers/schedules.controller'
-import isAdmSchedulesMiddleware from '../middleware/isAdmSchedules'
+import isAdmSchedulesMiddleware from '../middleware/isAdmSchedules.middleware'
 import validateTokenMiddleware from '../middleware/validateToken.meddleware'
 
 const schedulesRoutes = Router()

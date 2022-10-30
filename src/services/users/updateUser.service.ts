@@ -21,7 +21,9 @@ const updateUserService = async(id:string, user:IUserUpdate) =>{
   
   const userEd = await userRepository.findOneBy({id})
 
-  return [userEd?.id,userEd?.name,userEd?.email,userEd?.isAdm,userEd?.isActive, userEd?.createdAt, userEd?.updatedAt]
+  const userReturn = {id:userEd?.id, name:userEd?.name, isAdm:userEd?.isAdm, isActive:userEd?.isActive, createdAt:userEd?.createdAt, email:userEd?.email, updatedAt:userEd?.updatedAt, schedule:userEd?.schedule}
+
+  return userReturn
 }
 
 export default updateUserService;

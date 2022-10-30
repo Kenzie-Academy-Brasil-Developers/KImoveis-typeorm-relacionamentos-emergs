@@ -3,35 +3,62 @@ import { Schedule } from '../../entities/scheduleUserProperties.entity'
 import { IScheduleRequest } from '../../interfaces/schedules'
 import { v4 as uuid } from 'uuid'
 import { AppError } from '../../errors/appError'
+import { Properties } from '../../entities/properties.entity'
+import { User } from '../../entities/user.entity'
 
-const scheduleVisitService = async ({date, hour, propertyId}:IScheduleRequest,id:string):Promise<Schedule>=>{
-  const repo = AppDataSource.getRepository(Schedule)
-  const schedulesExists = await repo.findOneBy({id})
+const scheduleVisitService = async ({userId, propertyId, date, hour}:IScheduleRequest):Promise<Schedule>=>{
+  //pega o usurio pelo id
+  const repoUser = AppDataSource.getRepository(User)
+  const user = await repoUser.findOneBy({id:userId})
+  if(!user){
+    throw new AppError('Usuario não encontrado');
+  }
+
+  //pega a propriedade pelo id
+  const repoProperty = AppDataSource.getRepository(Properties)
+  const allProperties = await repoProperty.find()
+  const property = allProperties.find(property=>property.id === propertyId)
+  if(!property){
+    throw new AppError('Propriedade não encontrada',404);
+  }
   
-  if(!schedulesExists){
-    throw new AppError('Visita ja agendada',400);
+
+  const newDate = new Date(date)
+  const hours = parseInt(hour.split(':')[0])
+  const min = parseInt(hour.split(':')[1])
+
+  if (newDate.getDay() === 6 || newDate.getDay() === 7) {
+    throw new AppError("Invalid date", 400);
+  }
+
+  if(hours < 8 || hours >= 18 && min >= 0){
+    throw new AppError('Horario não permitido');
     
   }
-  // const propertyExists = data.find(property=>property.id === propertyId)
-  // console.log(propertyExists);
   
-  // if(!propertyExists){
-  //   throw new AppError('Propriedade não cadastrada',404);
-  // }
+  const repoSchedule = AppDataSource.getRepository(Schedule)
+  
 
-  const schedule = new Schedule()
-  schedule.date = date
-  schedule.hour = hour
-  schedule.property = propertyId
-  schedule.user = id
-  schedule.id = uuid()
+  const schedule = repoSchedule.create({
+    date:date,
+    hour:hour,
+    user:user,
+    properties:property
+  })
 
-  repo.create(schedule)
-  await repo.save(schedule)
-  //console.log(schedule);
+  const schedulesHour = await repoSchedule.findOneBy({
+    hour: schedule.hour,
+    date: schedule.date,
+  });
+
+  if(schedulesHour){
+    throw new AppError('Horario indisponivel');
+  }
+
+  await repoSchedule.save(schedule)
   
   return schedule
-  
 }
 
 export default scheduleVisitService
+

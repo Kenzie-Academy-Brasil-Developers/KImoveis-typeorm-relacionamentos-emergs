@@ -14,14 +14,13 @@ const createUserController = async (req:Request, res:Response)=>{
 
 const listUsersController = async (req:Request, res:Response)=>{
   const users = await listUsersService()
-  return res.status(200).json(users)
+  return res.status(200).json(instanceToPlain(users))
 }
 
 const updateUserController = async(req:Request, res:Response)=>{
   const id:string = req.params.id
   const user = req.body
   const userEdit = await updateUserService(id,user)
-  console.log(userEdit);
   
   return res.status(200).json(instanceToPlain(userEdit))
 }

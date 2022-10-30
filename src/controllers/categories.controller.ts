@@ -17,6 +17,7 @@ const listAllCategoriseController = async (req:Request, res:Response)=>{
 const listPropertiesCategoryController = async(req:Request, res:Response)=>{
   const id:string = req.params.id
   const properties = await listPropertiesCategoryService(id)
+  
   res.status(200).json(properties)
 }
 

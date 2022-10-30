@@ -12,7 +12,7 @@ export class Addresses{
   @Column()
   zipCode: string
   
-  @Column({nullable:true})
+  @Column()
   number?: string
   
   @Column()

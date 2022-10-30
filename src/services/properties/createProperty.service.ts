@@ -12,17 +12,9 @@ const createPropertyService = async(data:IPropertyRequest):Promise<Properties>=>
   const categoryRepo = AppDataSource.getRepository(Categories)
   const addressRepo = AppDataSource.getRepository(Addresses)
 
-  const allAddress = await addressRepo.find()
-  const addressExists = allAddress.find(address=>address.zipCode === data.address.zipCode)
-
-  if(addressExists){
-    throw new AppError('Endereço ja existe',400);
-  }
-
-  const address = await createAddressService(data.address)
   const findCategory = await categoryRepo.find()
-  
   const categoryExists = findCategory.find(category=>category.id === data.categoryId)
+  
   if(!categoryExists){
     throw new AppError('Categoria não encontrada',404);
   }
@@ -34,6 +26,15 @@ const createPropertyService = async(data:IPropertyRequest):Promise<Properties>=>
   if(data.address.zipCode.length > 8){
     throw new AppError('Código Postal Invalido');
   }
+
+  const allAddress = await addressRepo.find()
+  const addressExists = allAddress.find(address=>address.zipCode === data.address.zipCode)
+
+  if(addressExists){
+    throw new AppError('Endereço ja existe',400);
+  }
+
+  const address = await createAddressService(data.address)
 
   const property = new Properties
   property.value = data.value
@@ -47,7 +48,6 @@ const createPropertyService = async(data:IPropertyRequest):Promise<Properties>=>
 
   propertyRepo.create(property)
   await propertyRepo.save(property)
-  console.log(property);
   
   return property
   

@@ -30,6 +30,6 @@ export class Properties{
   @ManyToOne(()=> Categories)
   category: Categories
 
-  @OneToMany(()=>Schedule, schedule=>schedule.property)
-  schedule: Schedule
+  @OneToMany(()=>Schedule, schedule=>schedule.properties)
+  schedules: Schedule
 }

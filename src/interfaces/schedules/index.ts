@@ -1,6 +1,6 @@
 export interface IScheduleRequest {
     userId: string
-    propertyId: any
+    propertyId: string
     date: string
     hour: string
 }
